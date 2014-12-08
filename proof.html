@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>LUA lesson, proof of concept</title>
+		<script src="weblua.js"></script>
+
+		<script>
+			function dohelp() {
+				var content = document.getElementById('hint');
+				alert('Make sure to put my_variable on the left side of the =, and 10 on the right.');
+				return false;
+			}
+
+			function print(stream, str, title) {
+				var output = document.getElementById('output');
+				var element = document.createElement('pre');
+				element.setAttribute('class', stream);
+				if (title && title.length)
+					element.setAttribute('title', title);
+				element.appendChild(document.createTextNode(str));
+				output.appendChild(element);
+			}
+
+			function stdout(str, title) {
+				print('stdout', str, title);
+			}
+			
+			function stderr(str, title) {
+				print('stderr', str, title);
+			}
+
+			function execute(value) {
+				if (!value) {
+					var element = document.getElementById("luasrc");
+					value = element.value;
+				}
+				
+				Lua.exec(value);
+			}
+
+			function initialize() {
+				Lua.initialize('stdin', stdout, stderr);
+			}
+
+			function doclick() {
+				execute();
+
+				var theValue = Lua.exec("return my_variable;");
+				
+				if (theValue == 10) {
+					stdout('CORRECT! Move on to the next lesson');
+				}
+				else {
+					if (theValue == null || theValue == '') {
+						stdout('Not exactly, the variable should be called <b>my_variable</b>');
+					}
+					else {
+						stdout('Almost, the <i>value</i> of the variable should be <b>10</b>');
+					}
+				}
+
+				return false;
+			}
+		</script>
+
+	</head>
+	<body>
+		<h3>Variables</h3>
+		<p>
+			Creating interactive applications involves storing and working with different types of data.<br />
+			They do so using <b>variables</b>. A <b>variable</b> stores a piece of data and gives it a specific name.
+		</p>
+		<p>
+			For Example:<br/>
+			<b><i>spam = 5 </b></i><br/>
+			The variable <i>spam</i> now stores the number 5.
+		</p>
+		<h3>Instructions</h3>
+		<ul>
+			<li>Below, et the variable <i>my_variable</i> equal to the value <i>10</i></li>
+			<li>Click the <i>&quot;Run Code&quot;</i> link when finished to test out the code</li>
+		</ul>
+		<h3>Hint</h3>
+		<div id="hint">
+			<a href="#" title="Show hint" onclick="return dohelp();">Click to show hint</a>
+		</div>
+		<h3>Run code</h3>
+		
+		<textarea rows="4" cols="50" id="luasrc">--Write your code in this box!
+</textarea> <br />
+		<a href="#" title="Execute lines" onclick="return doclick();">Run Code</a>
+		<div id="output">
+
+		</div>
+		<script>
+			initialize();
+		</script>
+	</body>
+</html>
